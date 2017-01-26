@@ -1,0 +1,10 @@
+Data Port an Port C
+RET PD7
+CS2 PD6
+CS1 PD5
+E PD4
+RW PD3
+DI PD2
+
+
+
