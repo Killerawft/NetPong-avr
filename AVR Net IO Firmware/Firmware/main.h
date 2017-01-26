@@ -24,7 +24,8 @@
 #define is_avr
 
 //Der eingestellte Takt
-#define F_CPU 16000000
+/*#define F_CPU 16000000UL*/
+
 /*Falls der interne Oszillator verwendet wird, sollte mit dem Programmer einmal
 das entsprechende Calibrierungsbyte ausgelesen und für osccaleradout
 gesetzt werden. Dieser Wert kann sich von Chip zu Chip unterscheiden!
@@ -32,7 +33,7 @@ Bei falschen Werten läuft der Chip zu schnell oder zu langsam.
 Der osccaleradout Wert wird dann beim Programmstart in das OSCCAL Register
 geschrieben. Wird ein externer Takt verwendet, so hat dies keine Bedeutung.
 */
-#define osccaleradout 0xad
+/*#define osccaleradout 0xad*/
 
 /*Berechnung der Timer Geschwindigkeit.
 Der Timer2 soll alle 4800mal pro Sekunde auslösen. (100Hz*16Zeilen*3Durchläufe)
@@ -44,17 +45,17 @@ umgestellt:
 255 = (FCPU/8)/4800)+timerset
 255-((FCPU/8)/4800) = timerset
 */
-#define timerset_test (255-(F_CPU/8/4800))
-
-#if (timerset_test < 0)
-#define timerset 0
-#else
-#define timerset (uint8_t)timerset_test
-#endif
-
-#if (timerset_test > 174)
-#error "Der gewählte Takt ist zu langsam. 4MHZ sind Minnimum, 8MHZ werden empfohlen"
-#endif
+// #define timerset_test (255-(F_CPU/8/4800))
+// 
+// #if (timerset_test < 0)
+// #define timerset 0
+// #else
+// #define timerset (uint8_t)timerset_test
+// #endif
+// 
+// #if (timerset_test > 174)
+// #error "Der gewählte Takt ist zu langsam. 4MHZ sind Minnimum, 8MHZ werden empfohlen"
+// #endif
 
 /* Berechnen des Wertes für waitms. Dieser Wert ist abhängig von F_CPU und
 der Zeit die von der Interrupt Routine benötigt wird
@@ -68,11 +69,11 @@ Routine nicht genau ermittelt hatte und pauschal von 50% für die Interrupts
 Routine ausging. Somit sind die verwendeten Delayzeiten in der Demos selbst
 etwas zu groß.
 */
-#define F_CPU_msdelay (uint16_t)((F_CPU-(2582400))/5000)
+/*#define F_CPU_msdelay (uint16_t)((F_CPU-(2582400))/5000)*/
 
-#define eeprom_data  __attribute__ ((section(".eeprom")))
+/*#define eeprom_data  __attribute__ ((section(".eeprom")))*/
 
-//Externe Funktionen
+// Externe Funktionen
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/interrupt.h>
@@ -102,6 +103,6 @@ typedef int32_t  s32;
 static void init_io_pins(void);
 */
 //void init_random(void);
-int main(void);
+//int main(void);
 
 #endif

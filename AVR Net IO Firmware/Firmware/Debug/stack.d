@@ -16,11 +16,11 @@ stack.d stack.o: .././stack.c \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\4.9.2\include\stddef.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\eeprom.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
- .././usart.h .././httpd.h .././telnetd.h .././networkcard/enc28j60.h \
+ .././usart.h .././networkcard/enc28j60.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\4.9.2\include\stdarg.h \
- ..\./config.h ..\./usart.h .././networkcard/rtl8019.h .././config.h \
- .././timer.h .././dnsc.h .././dhcpc.h .././stack.h
+ ..\./config.h ..\./usart.h .././config.h .././timer.h .././dnsc.h \
+ .././stack.h
 
 d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
 
@@ -58,10 +58,6 @@ d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 .././usart.h:
 
-.././httpd.h:
-
-.././telnetd.h:
-
 .././networkcard/enc28j60.h:
 
 d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
@@ -72,14 +68,10 @@ d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 
 ..\./usart.h:
 
-.././networkcard/rtl8019.h:
-
 .././config.h:
 
 .././timer.h:
 
 .././dnsc.h:
-
-.././dhcpc.h:
 
 .././stack.h:

@@ -1,5 +1,4 @@
-usart.d usart.o: .././usart.c .././config.h .././telnetd.h .././usart.h \
- .././stack.h \
+usart.d usart.o: .././usart.c .././config.h .././usart.h .././stack.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
@@ -21,8 +20,6 @@ usart.d usart.o: .././usart.c .././config.h .././telnetd.h .././usart.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h
 
 .././config.h:
-
-.././telnetd.h:
 
 .././usart.h:
 

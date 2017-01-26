@@ -55,7 +55,7 @@
 
 	extern void command_mac			(void);
 	extern void command_ver			(void);
-	extern void command_setvar		(void);
+	//extern void command_setvar		(void);
 	extern void command_time		(void);
 	extern void command_ntp_refresh	(void);
 	#if USE_WOL

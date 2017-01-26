@@ -24,6 +24,6 @@ void waitms(uint16_t zeitms) {
 
   while (zeitms != 0) { //Nicht sonderlich genau
     zeitms--;
-    _delay_loop_2(F_CPU_msdelay);//Jeder Duchlauf mit n=1 benötigt 4 Takte
+    _delay_ms(1);//Jeder Duchlauf mit n=1 benötigt 4 Takte
   }
 }

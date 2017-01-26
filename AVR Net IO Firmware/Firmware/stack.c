@@ -29,14 +29,14 @@
 
 #include <avr/pgmspace.h>
 #include "usart.h"
-#include "httpd.h"
-#include "telnetd.h"
+//#include "httpd.h"
+//#include "telnetd.h"
 #include "networkcard/enc28j60.h"
-#include "networkcard/rtl8019.h"
+//#include "networkcard/rtl8019.h"
 #include "config.h"
 #include "timer.h"
 #include "dnsc.h"
-#include "dhcpc.h"
+//#include "dhcpc.h"
 #include "stack.h"
 
 
@@ -340,6 +340,7 @@ void eth_get_data (void)
 		eth.data_present = 0;
 		ETH_INT_ENABLE;
 	}
+    
 	return;
 }
 //----------------------------------------------------------------------------

@@ -27,9 +27,9 @@
 #include <avr/interrupt.h>
 #include "usart.h"
 #include "stack.h"
-#include "ntp.h"
+//#include "ntp.h"
 #include "cmd.h"
-#include "dhcpc.h"
+//#include "dhcpc.h"
 #include "timer.h"
 
 #if USE_ARTNET

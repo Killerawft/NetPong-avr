@@ -23,7 +23,7 @@
 ------------------------------------------------------------------------------*/
 #include "config.h"
 #include "networkcard/enc28j60.h"
-#include "networkcard/rtl8019.h"
+//#include "networkcard/rtl8019.h"
 #include "cmd.h"
 #include <avr/io.h>
 #include <string.h>
@@ -31,10 +31,10 @@
 #include <avr/eeprom.h>
 #include "usart.h"
 #include "stack.h"
-#include "httpd.h"
-#include "ntp.h"
+//#include "httpd.h"
+//#include "ntp.h"
 #include "wol.h"
-#include "sendmail.h"
+//#include "sendmail.h"
 #include "timer.h"
 #include "dnsc.h"
 	
@@ -51,7 +51,7 @@ COMMAND_STRUCTUR COMMAND_TABELLE[] = // Befehls-Tabelle
 	{"NTP",command_ntp},
 	{"MAC",command_mac},
 	{"VER",command_ver},
-	{"SV",command_setvar},
+	//{"SV",command_setvar},
 	{"TIME",command_time},
 	{"NTPR",command_ntp_refresh},	
 	#if USE_WOL
@@ -248,11 +248,11 @@ void command_tcp (void)
 
 //------------------------------------------------------------------------------
 //ändern einer Variable
-void command_setvar (void)
-{
-	var_array[variable[0]] = variable[1];
-	usart_write("Inhalt der Variable[%2i] = %2i\r\n",variable[0],var_array[variable[0]]);
-}
+// void command_setvar (void)
+// {
+// 	var_array[variable[0]] = variable[1];
+// 	usart_write("Inhalt der Variable[%2i] = %2i\r\n",variable[0],var_array[variable[0]]);
+// }
 
 //------------------------------------------------------------------------------
 //print Time

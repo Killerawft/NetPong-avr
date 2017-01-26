@@ -40,7 +40,6 @@ Datum der letzten Änderung:
 #include <avr/pgmspace.h>
 #include <inttypes.h>
 
-char textbuff[37];      //Text Puffer
 
 const char characters[] PROGMEM = {
 0x00,0x00,0x00,0x00,0x00, //Leerzeichen
@@ -141,11 +140,6 @@ const char characters[] PROGMEM = {
 };
 
 
-void load_text(PGM_VOID_P x){
-  memcpy_P(textbuff,x,36);
-}
-
-
 uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color) 
 {
 uint8_t nunbyte,charwidth,nunbit;
@@ -179,27 +173,27 @@ if (zeichen < 94) { //gültiges Zeichen
 return charwidth++;
 }          //end: function
 
-void draw_string (uint8_t posx, uint8_t posy, uint8_t color)
+void draw_string (char* c, uint8_t posx, uint8_t posy, uint8_t color)
 { // Sendet String an Display
 uint8_t i = 0;       //welches Zeichen gezeichnet wird
-const uint8_t end = strlen(textbuff); //erspart Rechenzeit!
+const uint8_t end = strlen(c); //erspart Rechenzeit!
 while (i < end) {
- posx += draw_char(textbuff[i], posx+i, posy, color);
+ posx += draw_char(*(c+i), posx+i, posy, color);
   i++;  // Zeiger um 1 erhöhen
 }
 }
 
-void scrolltext (uint8_t posy, uint8_t color, uint8_t bcolor, uint8_t waittime){
+void scrolltext (char* c, uint8_t posy, uint8_t color, uint8_t bcolor, uint8_t waittime){
 uint8_t i=0;       //welches Zeichen gezeichnet wird
 uint8_t posx;      //wo gezeichnet wird
 uint8_t posshift=0;
-const uint8_t end = strlen(textbuff); //erspart Rechenzeit!
+const uint8_t end = strlen(c); //erspart Rechenzeit!
 uint8_t tomove = end;//wie oft geschoben werden muss
 
 //Erstes Zeichnen um die maximale Länge zu ermitteln, jedoch nicht sichtbar
 if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
   while (i < end) { //Ermittelt die Textlänge in Pixel
-    tomove += draw_char(textbuff[i], screenx, 0, 1);
+    tomove += draw_char(*(c+i), screenx, 0, 1);
     i++;  // Zeiger um 1 erhöhen
   }
   tomove -= 2; //zwei Pixel weniger schieben
@@ -212,7 +206,7 @@ if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
     posx = screenx-1;
     i = 0;
     while (i < end) {
-      posx += draw_char(textbuff[i], posx+i-posshift, posy, color);
+      posx += draw_char(*(c+i), posx+i-posshift, posy, color);
       i++;  // Zeiger um 1 erhöhen
     }
     //Warten, damit der Text sichbar ist

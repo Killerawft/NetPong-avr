@@ -342,18 +342,18 @@ const char pong_both[] PROGMEM = "Tie ";
 const char pong_Test[] PROGMEM = "HALLO";
 
 static void pong_endabs(u08 gameend) {
-u08 color = 0x32;
+//u08 color = 0x32;
 //Spiel wird mit Ausgaben gewonnen/verloren/unentschieden beendet
-load_text(pong_both);
-if (gameend == 1) {
-  load_text(pong_lost);
-  color = 0x03;
-}
-if (gameend == 2) {
-  load_text(pong_won);
-  color = 0x30;
-}
-scrolltext(4,color,0,100);
+// load_text(pong_both);
+// if (gameend == 1) {
+//   load_text(pong_lost);
+//   color = 0x03;
+// }
+// if (gameend == 2) {
+//   load_text(pong_won);
+//   color = 0x30;
+// }
+// scrolltext(4,color,0,100);
 }
 
 static void pong_drawplayers(u08 play1pos, u08 play1pos_o,
@@ -381,9 +381,9 @@ void pong_draw_field(void) //Spielfeld malen
 void draw_start_screen() //Startbildschirm malen
 {
     pong_draw_field();
-    
-    load_text(pong_Test);
-    draw_string(64,32, 1);
+
+     draw_string("Sp 1", 0,0, 1);
+     draw_string("Sp 2", 128 - CTP_X(3),64 - CTP_Y(1), 1);
 }
 
 #define pong_virtual_timers 5
@@ -407,7 +407,7 @@ while(1)
 }
 
 //Zufallsgenerator initialisieren
-init_random();
+//init_random();
 //Timer1 wird für das Timing verwendet, 31,25KHZ Takt
 TCNT1 = 0; //Reset Timer
 TCCR1B = (1<<CS12); //Prescaler: 256

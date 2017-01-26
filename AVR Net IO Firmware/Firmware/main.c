@@ -22,8 +22,6 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA. 
 ----------------------------------------------------------------------------*/
 
-#define F_CPU 16000000UL
-
 #include <avr/io.h>
 #include <avr/eeprom.h>
 #include "main.h"
@@ -36,13 +34,15 @@
 #include "base64.h"
 
 
-
-// void init_random(void) {
-//     if (init_random_done == 0) { //Nur einmal initialisieren
-//         srand(TCNT0); //TCNT0 müsste irgendwo zwischen 130 und 254 sein
-//         init_random_done = 1;
-//     }
-// }
+void DisplayData()
+{
+    eth_buffer[UDP_DATA_END_VAR + 1] = NULL; //Empfangene Daten terminieren für Draw_String
+    
+    draw_string(&eth_buffer[UDP_DATA_START],10, 10, 1);
+    
+    create_new_udp_packet(UDP_DATA_END_VAR - UDP_DATA_START, 2222, 55056, IP(192,168,1,51));
+    LED2_TOGGLE
+}
 
 //----------------------------------------------------------------------------
 //Hier startet das Hauptprogramm
@@ -51,14 +51,11 @@ int main(void)
 	unsigned char reset_counter = 0;
 	unsigned long time_update = 0;
 	
-	//Konfiguration der Ausgänge bzw. Eingänge
-	//definition erfolgt in der config.h
-	DDRA = OUTA;
-	DDRC = OUTC;
-	DDRD = OUTD;
-	
     unsigned long a;
 	
+    DDRA = 0x70; //Port 6, 5, 4 als Ausgang für LED's
+    LED1_ON
+    
     usart_init(BAUDRATE); // setup the UART
 	
 	usart_write("\n\rSystem Ready\n\r");
@@ -81,10 +78,12 @@ int main(void)
     usart_write("\r\nIP   %1i.%1i.%1i.%1i\r\n", myip[0]     , myip[1]     , myip[2]     , myip[3]);
     usart_write("MASK %1i.%1i.%1i.%1i\r\n", netmask[0]  , netmask[1]  , netmask[2]  , netmask[3]);
     usart_write("GW   %1i.%1i.%1i.%1i\r\n", router_ip[0], router_ip[1], router_ip[2], router_ip[3]);
-	    	
+	
+    add_udp_app(2222, (void(*)(unsigned char))DisplayData);
+    draw_start_screen();
+    
 	while(1)
 	{
-        draw_start_screen();
         
 	    eth_get_data();
 				

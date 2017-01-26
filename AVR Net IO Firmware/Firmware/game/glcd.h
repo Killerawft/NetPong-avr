@@ -36,8 +36,12 @@ typedef unsigned char byte;
 //#define CS_ACTIVE_LOW   1   //Define this if your GLCD CS
                               //is active low (refer to datasheet)
 
-#define screenx 128
-#define screeny 64
+#define screenx         128
+#define screeny         64
+#define FLIP_SCREEN     1
+
+#define CTP_X(x)   x*6       //X Buchstaben umrechnen in Pixelanzahl auf x achse
+#define CTP_Y(x)   x*7       //X Buchstaben umrechnen in Pixelanzahl auf < achse
 
 void trigger();
 void glcd_on();
@@ -52,6 +56,10 @@ void glcd_clear();
 byte glcd_read(byte column);
 void point_at(unsigned int x,unsigned int y,byte color);
 void glcd_init();
+void h_line(unsigned int x,unsigned int y,byte l,byte s,byte c);
+void v_line(unsigned int x,unsigned int y,signed int l,byte s,byte c);
+void circle(unsigned int x0,unsigned int y0,unsigned int r,byte s,byte c);
+void rectangle(unsigned int x1,unsigned int y1, unsigned int x2,unsigned int y2, byte s,byte c);
 
 
 #endif /* GLCD_H_ */

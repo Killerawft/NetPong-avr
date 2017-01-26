@@ -12,8 +12,7 @@ timer.d timer.o: .././timer.c .././config.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- .././usart.h .././stack.h .././ntp.h .././cmd.h .././dhcpc.h \
- .././timer.h
+ .././usart.h .././stack.h .././cmd.h .././timer.h
 
 .././config.h:
 
@@ -47,10 +46,6 @@ d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 .././stack.h:
 
-.././ntp.h:
-
 .././cmd.h:
-
-.././dhcpc.h:
 
 .././timer.h:

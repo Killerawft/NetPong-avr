@@ -56,5 +56,7 @@ static u08 pong_selectmode(void);
 */
 
 void pong_init();
+void draw_start_screen();
+
 
 #endif

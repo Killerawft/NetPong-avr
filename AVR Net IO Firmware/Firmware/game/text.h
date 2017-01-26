@@ -25,10 +25,6 @@
 #warning "Die Funktion scrolltext() erzeugt bei einer Bildschirmbreite von mehr als 249 Pixel Fehler!"
 #endif
 
-extern char textbuff[37];          //Text Puffer
-
-void load_text(PGM_VOID_P x);
-
 
 /* draw_char prüft, vor dem schreiben auf das Display ob die Position
 innerhalb des gültigen Bereiches ist. Daher sind für posx und posy auch negative
@@ -38,9 +34,9 @@ Im schlimmsten Fall werden sie an die falsche Stelle auf dem Display gezeichnet.
 */
 uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color);
 
-void draw_string(uint8_t posx, uint8_t posy, uint8_t color);
+void draw_string(char* c,uint8_t posx, uint8_t posy, uint8_t color);
 
-void scrolltext(uint8_t posy, uint8_t color, uint8_t bcolor, uint8_t waittime);
+void scrolltext(char* c, uint8_t posy, uint8_t color, uint8_t bcolor, uint8_t waittime);
 
 void draw_tinydigit(uint8_t ziffer, uint8_t posx,uint8_t posy, uint8_t color);
 

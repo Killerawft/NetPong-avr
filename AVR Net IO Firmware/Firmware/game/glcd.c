@@ -229,6 +229,11 @@ byte glcd_read(byte column)
 //-----------------------
 void point_at(unsigned int x,unsigned int y,byte color)
 {
+#if FLIP_SCREEN
+    x = screenx - x - 1;
+    y = screeny - y - 1;
+#endif
+    
     byte pattern = 0;
     goto_xy(x,(int)(y/8));
     switch (color)
@@ -284,9 +289,7 @@ void circle(unsigned int x0,unsigned int y0,unsigned int r,byte s,byte c)
     v_line(x0-(i-1) ,y0-y ,y,s,c);
 }
 //-----------------------
-void rectangle(unsigned int x1,unsigned int y1,
-unsigned int x2,unsigned int y2,
-byte s,byte c)
+void rectangle(unsigned int x1,unsigned int y1, unsigned int x2,unsigned int y2, byte s,byte c)
 {
     h_line(x1,y1,(x2-x1),s,c);
     h_line(x1,y2,(x2-x1),s,c);

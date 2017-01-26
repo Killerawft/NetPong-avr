@@ -16,12 +16,11 @@ cmd.d cmd.o: .././cmd.c .././config.h .././networkcard/enc28j60.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- ..\./config.h ..\./usart.h .././networkcard/rtl8019.h .././cmd.h \
+ ..\./config.h ..\./usart.h .././cmd.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdlib.h \
  d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\eeprom.h \
- .././usart.h .././stack.h .././httpd.h .././ntp.h .././wol.h \
- .././sendmail.h .././timer.h .././dnsc.h
+ .././usart.h .././stack.h .././wol.h .././timer.h .././dnsc.h
 
 .././config.h:
 
@@ -65,8 +64,6 @@ d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 ..\./usart.h:
 
-.././networkcard/rtl8019.h:
-
 .././cmd.h:
 
 d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h:
@@ -79,13 +76,7 @@ d:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 
 .././stack.h:
 
-.././httpd.h:
-
-.././ntp.h:
-
 .././wol.h:
-
-.././sendmail.h:
 
 .././timer.h:
 

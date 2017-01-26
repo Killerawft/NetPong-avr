@@ -32,9 +32,9 @@
 	
 	//Konfiguration der PORTS (HEX)
 	//1=OUTPUT / 0=INPUT
-	#define OUTA 		0x07
-	#define OUTC 		0x00
-	#define OUTD 		0x00
+// 	#define OUTA 		0x07
+// 	#define OUTC 		0x00
+// 	#define OUTD 		0x00
 	//Achtung!!!! an PORTB ist der ENC
 	//nur ändern wenn man weiß was man macht!
 
@@ -133,6 +133,20 @@
     //Commandos und Ausgaben erfolgen über Telnet
     #define CMD_TELNET      0
     
+    
+    //LED Steuerung
+    #define LED1_ON         PORTA |= (1<<PA4);
+    #define LED2_ON         PORTA |= (1<<PA5);
+    #define LED3_ON         PORTA |= (1<<PA6);
+    
+    #define LED1_OFF        PORTA &= ~(1<<PA4); 
+    #define LED2_OFF        PORTA &= ~(1<<PA5);
+    #define LED3_OFF        PORTA &= ~(1<<PA6);    
+    
+    #define LED1_TOGGLE     PORTA ^= (1<<PA4);
+    #define LED2_TOGGLE     PORTA ^= (1<<PA5);
+    #define LED3_TOGGLE     PORTA ^= (1<<PA6);
+        
 #endif //_CONFIG_H
 
 
