@@ -210,6 +210,12 @@
     <Compile Include="main.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="NetParse.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="NetParse.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="networkcard\enc28j60.c">
       <SubType>compile</SubType>
     </Compile>

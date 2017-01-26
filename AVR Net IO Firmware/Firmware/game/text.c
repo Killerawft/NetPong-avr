@@ -140,7 +140,8 @@ const char characters[] PROGMEM = {
 };
 
 
-uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color) 
+
+uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn) 
 {
 uint8_t nunbyte,charwidth,nunbit;
 uint8_t copyedbytes[5];
@@ -157,10 +158,20 @@ if (zeichen < 94) { //gültiges Zeichen
        tempx = posx+charwidth;
        tempy = posy+nunbit;
        if ((tempx < screenx) && (tempy < screeny)) {
+         if (turn == 1) //90° IUZ Drehen
+         {//Funktioniert noch nicht
+//             uint8_t ttempx = tempx; //tempvariable für temp koordianten
+//             tempx = CWDT - tempy - 1;   //X Koordinate ummappen
+//             tempy = ttempx;       //Y Koordinate ummappen mit vorher gespeicherten X Koordinate   
+         } 
+         else if (turn == 2) //90° GUZ Drehen
+         {
+             uint8_t ttemp; //tempvariable für temp koordianten
+         }
          if (color == 0) { //transparent
-           point_at(tempx, tempy, 0);
+           point_at(tempx , tempy, 0);
          }else{ //nicht transparent
-           point_at(tempx, tempy, 1);
+           point_at(tempx , tempy, 1);
          }
        }   //end: check range
      }     //end: there is a bit to write
@@ -173,12 +184,12 @@ if (zeichen < 94) { //gültiges Zeichen
 return charwidth++;
 }          //end: function
 
-void draw_string (char* c, uint8_t posx, uint8_t posy, uint8_t color)
+void draw_string (char* c, uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn)
 { // Sendet String an Display
 uint8_t i = 0;       //welches Zeichen gezeichnet wird
 const uint8_t end = strlen(c); //erspart Rechenzeit!
 while (i < end) {
- posx += draw_char(*(c+i), posx+i, posy, color);
+ posx += draw_char(*(c+i), posx+i, posy, color, turn);
   i++;  // Zeiger um 1 erhöhen
 }
 }
@@ -193,7 +204,7 @@ uint8_t tomove = end;//wie oft geschoben werden muss
 //Erstes Zeichnen um die maximale Länge zu ermitteln, jedoch nicht sichtbar
 if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
   while (i < end) { //Ermittelt die Textlänge in Pixel
-    tomove += draw_char(*(c+i), screenx, 0, 1);
+    tomove += draw_char(*(c+i), screenx, 0, 1, 0);
     i++;  // Zeiger um 1 erhöhen
   }
   tomove -= 2; //zwei Pixel weniger schieben
@@ -206,7 +217,7 @@ if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
     posx = screenx-1;
     i = 0;
     while (i < end) {
-      posx += draw_char(*(c+i), posx+i-posshift, posy, color);
+      posx += draw_char(*(c+i), posx+i-posshift, posy, color, 0);
       i++;  // Zeiger um 1 erhöhen
     }
     //Warten, damit der Text sichbar ist

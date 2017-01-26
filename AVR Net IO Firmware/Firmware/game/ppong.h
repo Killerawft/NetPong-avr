@@ -33,27 +33,25 @@
 #define FIELD_CENTER_X      FIELD_SPACE + (FIELD_SIZE / 2)          //X Mittelpunkt des Feldes
 #define FIELD_CENTER_Y      (FIELD_SIZE / 2)                        //Y Mittelpunkt des Feldes
 
-/* Interne Funktionen, die als static deklariert sind:
-static void pong_shotstart(struct pong_shotstruct *ball, u08 playpos,
-                           u08 playerno);
-static u08 pong_shotdown(struct pong_shotstruct *ball, u08 playpos,
-                         u08 playerno);
-static void pong_moveshot(struct pong_shotstruct *ball,
-                          struct pong_shotstruct *ball2);
-static u08 pong_ai_precalcball(struct pong_ballstruct *ball);
-static s08 pong_ai_analyze(struct pong_ballstruct *ball,
-             struct pong_shotstruct *shot1,
-             struct pong_shotstruct *shot2, u08 analyzepos, u08 player2pos);
-static u08 pong_ai(struct pong_ballstruct *ball, struct pong_shotstruct *shot1,
-          struct pong_shotstruct *shot2, u08 play1pos, u08 play2pos, u08 mode);
-static void pong_moveball(struct pong_ballstruct *ball, u08 play1pos,
-                          u08 play2pos);
-static void pong_endabs(u08 gameend);
-static void pong_drawplayers(u08 play1pos, u08 play1pos_o,
-                             u08 play2pos, u08 play2pos_o);
-static void pong_drawselectmenu(u08 mode);
-static u08 pong_selectmode(void);
-*/
+
+#include "../config.h"
+#include "glcd.h"
+
+
+struct pong_ballstruct{
+    s08 speedx;
+    s08 speedy;
+    u08 posx;
+    u08 posy;
+};
+
+struct pong_playerstruct{
+    u08 posy;
+    u08 posyo;
+};
+
+struct pong_ballstruct ball = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};
+struct pong_playerstruct player[2] = {{PLAYER_LINE_START, 0},{PLAYER_LINE_START, 0}};
 
 void pong_init();
 void draw_start_screen();

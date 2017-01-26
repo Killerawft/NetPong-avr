@@ -38,7 +38,7 @@ void DisplayData()
 {
     eth_buffer[UDP_DATA_END_VAR + 1] = NULL; //Empfangene Daten terminieren für Draw_String
     
-    draw_string(&eth_buffer[UDP_DATA_START],10, 10, 1);
+    draw_string(&eth_buffer[UDP_DATA_START],10, 10, 1, 0);
     
     create_new_udp_packet(UDP_DATA_END_VAR - UDP_DATA_START, 2222, 55056, IP(192,168,1,51));
     LED2_TOGGLE
@@ -68,7 +68,10 @@ int main(void)
 	stack_init();
     
     glcd_init();
-		
+    
+    FrameTimerInit();
+    FrameTimerStart();
+    
 	//Ethernetcard Interrupt enable
 	ETH_INT_ENABLE;
 	

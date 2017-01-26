@@ -38,10 +38,7 @@ typedef unsigned char byte;
 
 #define screenx         128
 #define screeny         64
-#define FLIP_SCREEN     1
-
-#define CTP_X(x)   x*6       //X Buchstaben umrechnen in Pixelanzahl auf x achse
-#define CTP_Y(x)   x*7       //X Buchstaben umrechnen in Pixelanzahl auf < achse
+#define FLIP_SCREEN     0
 
 void trigger();
 void glcd_on();
