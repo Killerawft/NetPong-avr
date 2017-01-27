@@ -5,7 +5,5 @@
  *  Author: Rene
  */ 
 
-void UdpParse(void)
-{
-    
-}
+#include "NetParse.h"
+

@@ -10,7 +10,5 @@
 #define NETPARSE_H_
 
 
-void UdpParse(void);
-
 
 #endif /* NETPARSE_H_ */

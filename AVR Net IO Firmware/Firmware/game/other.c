@@ -18,8 +18,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "main.h"
-
+#include <avr/pgmspace.h>
 
 const char game_pts[] PROGMEM = "Pts:";
 
@@ -27,9 +26,9 @@ const char game_pts[] PROGMEM = "Pts:";
 const char intro1[16] PROGMEM = {0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,
                                  0x10,0x10,0x10,0x10,0x10,0x10,0x10};
 
-u08 init_random_done = 0;
+uint8_t init_random_done = 0;
 
-void wordtostr(char *s, u16 nummer, u08 digits, u08 strposition) {
+void wordtostr(char *s, uint16_t nummer, uint8_t digits, uint8_t strposition) {
 s += strposition;
 while (digits > 0) {
   digits--;
@@ -38,14 +37,14 @@ while (digits > 0) {
 }
 }
 
-u08 max(u08 val1, u08 val2) {
+uint8_t max(uint8_t val1, uint8_t val2) {
 if (val1 > val2) {
   return val1;
 }
 return val2;
 }
 
-u08 min(u08 val1, u08 val2) {
+uint8_t min(uint8_t val1, uint8_t val2) {
 if (val1 > val2) {
   return val2;
 }

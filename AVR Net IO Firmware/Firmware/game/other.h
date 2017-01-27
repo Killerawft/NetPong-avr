@@ -24,11 +24,11 @@
 //Variablen & Konstanten
 extern const char game_pts[] PROGMEM;
 extern const char intro1[16] PROGMEM;
-extern u08 init_random_done;
+extern uint8_t init_random_done;
 
 //Funktionsprototypen:
-void wordtostr(char *s, u16 nummer, u08 digits, u08 strposition);
-u08 max(u08 val1, u08 val2);
-u08 min(u08 val1, u08 val2);
+void wordtostr(char *s, u16 nummer, uint8_t digits, uint8_t strposition);
+uint8_t max(uint8_t val1, uint8_t val2);
+uint8_t min(uint8_t val1, uint8_t val2);
 
 #endif

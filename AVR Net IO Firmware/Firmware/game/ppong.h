@@ -33,28 +33,28 @@
 #define FIELD_CENTER_X      FIELD_SPACE + (FIELD_SIZE / 2)          //X Mittelpunkt des Feldes
 #define FIELD_CENTER_Y      (FIELD_SIZE / 2)                        //Y Mittelpunkt des Feldes
 
+#define NAME_SIZE           10                                      //Maximale Länge des Spielernamens
 
 #include "../config.h"
 #include "glcd.h"
+#include "text.h"
 
 
 struct pong_ballstruct{
-    s08 speedx;
-    s08 speedy;
-    u08 posx;
-    u08 posy;
+    int8_t speedx; 
+    int8_t speedy;
+    uint8_t posx;
+    uint8_t posy;
 };
 
 struct pong_playerstruct{
-    u08 posy;
-    u08 posyo;
+    uint8_t posy;
+    uint8_t posyo;
+    unsigned long IpAddress;
+    unsigned char Name[NAME_SIZE];
 };
 
-struct pong_ballstruct ball = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};
-struct pong_playerstruct player[2] = {{PLAYER_LINE_START, 0},{PLAYER_LINE_START, 0}};
-
-void pong_init();
-void draw_start_screen();
-
+struct pong_ballstruct ball;// = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};
+struct pong_playerstruct player[2];// = {{PLAYER_LINE_START, 0},{PLAYER_LINE_START, 0}};
 
 #endif

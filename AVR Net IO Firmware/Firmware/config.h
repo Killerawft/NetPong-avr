@@ -146,6 +146,10 @@
     #define LED1_TOGGLE     PORTA ^= (1<<PA4);
     #define LED2_TOGGLE     PORTA ^= (1<<PA5);
     #define LED3_TOGGLE     PORTA ^= (1<<PA6);
+    
+    
+    //Game Kommunikation Settings
+    #define GAME_PORT       2222
         
 #endif //_CONFIG_H
 

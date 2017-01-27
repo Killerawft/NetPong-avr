@@ -872,7 +872,7 @@ void udp_socket_process(void)
 	if (!UDP_PORT_TABLE[port_index].port)
 	{ 
 		//Keine vorhandene Anwendung eingetragen! (ENDE)
-		DEBUG("UDP Keine Anwendung gefunden!\r\n");
+		//DEBUG("UDP Keine Anwendung gefunden!\r\n");
 		return;
 	}
 

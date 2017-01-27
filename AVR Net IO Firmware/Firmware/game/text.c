@@ -34,7 +34,8 @@ Datum der letzten Änderung:
   2005-07-23: draw_tinynumber(), draw_tinydigit() hinzugefügt
 
 */
-#include "main.h"
+
+#include "glcd.h"
 #include "text.h"
 #include <string.h>
 #include <avr/pgmspace.h>
@@ -226,7 +227,7 @@ if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
 }
 }
 
-const u08 tinynumbers[] PROGMEM = {
+const uint8_t tinynumbers[] PROGMEM = {
 0x1f,0x11,0x1f, //0
 0x00,0x00,0x1f, //1
 0x1d,0x15,0x17, //2
@@ -240,7 +241,7 @@ const u08 tinynumbers[] PROGMEM = {
 };
 
 void draw_tinydigit(uint8_t ziffer, uint8_t posx,uint8_t posy, uint8_t color) {
-u08 nun, muster, pixely;
+uint8_t nun, muster, pixely;
 if (ziffer < 10) { //Bereichsüberprüfung
   for (nun = 0; nun <3; nun++) {
     muster = pgm_read_byte(tinynumbers +ziffer*3+nun);
@@ -255,7 +256,7 @@ if (ziffer < 10) { //Bereichsüberprüfung
 }
 
 void draw_tinynumber(uint16_t value, uint8_t posx, uint8_t posy, uint8_t color){
-u08 ziffern = 1,zvalue;
+uint8_t ziffern = 1,zvalue;
 
 if (value >= 10) { ziffern = 2; }
 if (value >= 100) { ziffern = 3; }
