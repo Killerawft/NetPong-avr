@@ -149,8 +149,9 @@
     
     
     //Game Kommunikation Settings
-    #define GAME_PORT       2222
-        
+    #define GAME_PORT       2222     //Port über den die Kommunikation läuft
+    #define CNTRL_HEAD      3       //Anzahl an Bytes, die zur Typendeklaration des Pakettyps dienen, also z.B. N1; für neuer Spieler    
+    
 #endif //_CONFIG_H
 
 

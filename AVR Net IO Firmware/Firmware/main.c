@@ -22,6 +22,12 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA. 
 ----------------------------------------------------------------------------*/
 
+#define WAIT_FOR_PLAYER     0
+#define COUNTDOWN           1
+#define GAME_RUNNING        2
+#define GAME_END            3
+
+//Net Stack
 #include <avr/io.h>
 #include <avr/eeprom.h>
 #include "config.h"
@@ -32,22 +38,13 @@
 #include "cmd.h"
 #include "base64.h"
 
-//#include "NetParse.h"
-
-// Externe Funktionen
+// Game
 #include <inttypes.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <stdlib.h>
 #include <math.h>
-
-//Um zu wissen für was uint8_t u.s.w. steht siehe inttypes.h
-typedef uint16_t u16;
-typedef int16_t  s16;
-typedef uint32_t u32;
-typedef int32_t  s32;
-
 #include "game/glcd.h"
 #include "game/timings.h"
 #include "game/other.h"
@@ -55,19 +52,13 @@ typedef int32_t  s32;
 #include "game/ppong.h"
 
 void UdpParse(void);
-void ParseNewPlayer(unsigned char* UdpData, uint8_t DataCnt);
+void ParseNewPlayer(unsigned char* UdpData);
 uint8_t NewPlayer(uint8_t PlayerNr, unsigned char* Name, unsigned long IpAddress);
 void DeletePlayer(uint8_t PlayerNr);
+void ClearUdp(unsigned char* UdpData, uint8_t DataSize);
 
-// void DisplayData()
-// {
-//     eth_buffer[UDP_DATA_END_VAR + 1] = NULL; //Empfangene Daten terminieren für Draw_String
-//     
-//     draw_string(&eth_buffer[UDP_DATA_START],10, 10, 1, 0);
-//     
-//     create_new_udp_packet(UDP_DATA_END_VAR - UDP_DATA_START, 2222, 55056, IP(192,168,1,51));
-//     LED2_TOGGLE
-// }
+
+uint8_t gamestatus = WAIT_FOR_PLAYER;        //0 Wenn auf Spieler gewartet wird | 1 Wenn das Spiel gestartet werden kann | 2 Wenn das Spiel gerade läuft | 3 Wenn das Spiel beendet ist.
 
 //----------------------------------------------------------------------------
 //Hier startet das Hauptprogramm
@@ -78,8 +69,12 @@ int main(void)
 	
     unsigned long a;
 	
+    uint8_t Countdwn = 4;
+    
     DDRA = 0x70; //Port 6, 5, 4 als Ausgang für LED's
-    LED1_ON
+    LED1_OFF
+    LED2_OFF
+    LED3_OFF
     
     usart_init(BAUDRATE); // setup the UART
 	
@@ -110,29 +105,35 @@ int main(void)
 	
     add_udp_app(GAME_PORT, (void(*)(unsigned char))UdpParse);
     
-    ball.posx = FIELD_CENTER_X;
-    ball.posy = FIELD_CENTER_Y;
-    ball.speedx = 0;
-    ball.speedy = 0;
-    
-    player[0].posy = PLAYER_LINE_START;
-    player[0].posyo = 0;
-    player[0].IpAddress = IP(0,0,0,0);
-    
-    for (uint8_t i = 0; i < NAME_SIZE; i++)
-        player[0].Name[i] = NULL;
-    
-    player[1].posy = PLAYER_LINE_START;
-    player[1].posyo = 0;
-    player[1].IpAddress = IP(0,0,0,0);
-    
-    for (uint8_t i = 0; i < NAME_SIZE; i++)
-        player[1].Name[i] = NULL;
-     
-    draw_start_screen();
+    reset_game();
     
 	while(1)
 	{
+        
+        
+        //Spiel steuerung
+        if (player[0].Name[0] != NULL && player[1].Name[0] != NULL && gamestatus == WAIT_FOR_PLAYER) //Beide Spieler angemeldet, und Spiel läuft nicht -> Spiel kann starten
+        {
+            gamestatus = COUNTDOWN;
+            DEBUG("\nGamestatus 1\n");
+        }else if (gamestatus == GAME_END) //Spiel beendet, gewinner anzeigen
+        {
+           draw_string("Gewinner", FIELD_CENTER_X - CTP_X(4), FIELD_CENTER_Y - CTP_Y(1), 1, 0);
+           
+           if (player[0].points >= WIN_POINTS)
+                draw_string(player[0].Name, FIELD_CENTER_X - CTP_X(4), FIELD_CENTER_Y, 1, 0);
+           if (player[1].points >= WIN_POINTS)
+                draw_string(player[1].Name, FIELD_CENTER_X - CTP_X(4), FIELD_CENTER_Y, 1, 0);
+        
+           reset_game();           	 
+        }         
+        
+        
+        
+        
+        
+        
+        
         
 	    eth_get_data();
 				
@@ -175,6 +176,37 @@ int main(void)
 					}
 				}
                 
+                
+                if (gamestatus == COUNTDOWN && Countdwn > 0) //Countdown ausgeben
+                {
+                    draw_tinynumber(Countdwn, FIELD_CENTER_X, FIELD_CENTER_Y, 0); //Zahl löschen
+                    Countdwn--;
+                    draw_tinynumber(Countdwn, FIELD_CENTER_X, FIELD_CENTER_Y, 1); //Zahl schreiben
+                    
+                }else if (gamestatus == COUNTDOWN && Countdwn == 0) //Countdown löschen und in Spielmodus wechseln
+                {
+                    draw_tinynumber(Countdwn, FIELD_CENTER_X, FIELD_CENTER_Y, 0); //Zahl löschen
+                    //strcpy(eth_buffer[UDP_DATA_START], "Go");
+
+                    //pong_drawball(1);
+                    ball.posx = FIELD_SPACE + FIELD_SIZE - 10;
+                    ball.posy = PLAYER_LINE_START - 1;
+                    
+                    ball.speedx = 1; //Ball in eine Richtung bewegen
+                    ball.speedy = 0;
+                    gamestatus = GAME_RUNNING; //Spiel starten
+                    DEBUG("\nGamestatus 2\n");
+                    
+                }else if (gamestatus == 2)
+                {
+                    pong_moveball();
+                    
+                    if (player[0].points >= WIN_POINTS || player[1].points >= WIN_POINTS) //Das SPiel wurde gewonnen
+                        gamestatus = GAME_END;
+                    	
+                }                
+                	              
+                    
 			}			
 		#endif
     }//while (1)
@@ -190,6 +222,7 @@ void UdpParse(void)
     
     DEBUG("\n\n\nNeues Paket der Länge %i\n", DataSize);
 
+    LED2_TOGGLE //Datenempfang signalisieren
     
     if ((UdpData = malloc(DataSize + 1)) == NULL)
     {
@@ -207,13 +240,43 @@ void UdpParse(void)
     
     //Daten Analysieren
    if (UdpData[0] == 'N')   //Neuer Spieler
-      ParseNewPlayer(UdpData, DataCnt);
+      ParseNewPlayer(UdpData);
+   else if (UdpData[0] == 'S') //Befehl von einem Spieler
+   {
+       uint8_t PlayerNr = UdpData[1] - 48;
+       DataCnt = CNTRL_HEAD;
+       
+       if (UdpData[DataCnt] == 'M' && player[PlayerNr].Name[0] != NULL) //Move Befehl wenn Spieler vorhanden
+       {        
+           DataCnt++;
+  
+           if (player[PlayerNr].posy > PLAYER_SIZE + 1 && player[PlayerNr].posy < screeny - 1)
+           {
+                DEBUG("Spieler %i bewegen\n", PlayerNr + 1);
+                if ((UdpData[DataCnt] == 'R' && PlayerNr == 0) || (UdpData[DataCnt] == 'L' && PlayerNr == 1)) //Spieler 1 nach Rechts bewegen aus seiner Sicht also nach oben
+                    player[PlayerNr].posy++;
+                else if ((UdpData[DataCnt] == 'L' && PlayerNr == 0) || (UdpData[DataCnt] == 'R' && PlayerNr == 1))               	
+                    player[PlayerNr].posy--;
+           }else
+           {
+               DEBUG("Spieler %i bleibt stehen\n", PlayerNr + 1);
+               player[PlayerNr].posy = player[PlayerNr].posyo;
+           }                      
+                
+           pong_drawplayers(); //Erstmal hier direkt zeichnen
+       }       
+            	
+       	
+       
+   }       
     
+    ClearUdp(UdpData, DataSize); //Speicher nullen
     free(UdpData); //Speicherplatz wieder frei geben
 }
 
-void ParseNewPlayer(unsigned char* UdpData, uint8_t DataCnt) //Daten für neuen SPieler parsen und versuchen Hinzuzufügen. Die UDP Response wird ebenfalls gesendet
+void ParseNewPlayer(unsigned char* UdpData) //Daten für neuen SPieler parsen und versuchen Hinzuzufügen. Die UDP Response wird ebenfalls gesendet
 {
+  uint8_t DataCnt = 0;
   uint8_t PlayerNr = UdpData[1] - 48;
   unsigned char Name[NAME_SIZE + 1];
   unsigned long IpAddress;
@@ -227,16 +290,18 @@ void ParseNewPlayer(unsigned char* UdpData, uint8_t DataCnt) //Daten für neuen S
   //Namen entnehmen
   uint8_t i = 0;
   
-  while (UdpData[3 + i] != ';')// && i < NAME_SIZE)
+  while (UdpData[CNTRL_HEAD + i] != ';')
   {
-      Name[i] = UdpData[3 + i];
+      Name[i] = UdpData[CNTRL_HEAD + i];
       i++;
+      if (i >= NAME_SIZE)
+      	continue;
   }
   Name[i] = NULL; //Name String abschließen
   
   DEBUG("Name: %s\n", Name);
   
-  DataCnt = i + 3 + 1; //Zähler auf aktuelle Position verschieben, da i gleich noch neu gebraucht wird
+  DataCnt = i + CNTRL_HEAD + 1; //Zähler auf aktuelle Position verschieben, da i gleich noch neu gebraucht wird
 
   //IP Adresse auslesen und umwandeln
   char IpStr[4];
@@ -279,10 +344,18 @@ uint8_t NewPlayer(uint8_t PlayerNr, unsigned char* Name, unsigned long IpAddress
         return -1;
     }
         
-    DEBUG("\nNeuer Spieler Nr: %i  Name: %s  IP: %i", PlayerNr, Name, IpAddress);
+    DEBUG("\nNeuer Spieler Nr: %i  Name: %s  IP: ", PlayerNr, Name);
+    print_ip(IpAddress);
     strcpy(player[PlayerNr].Name, Name);
     player[PlayerNr].IpAddress = IpAddress;
     
+    draw_string(player[PlayerNr].Name, PlayerNr * (screenx - FIELD_SPACE + 2), CTP_Y(1) + 3, 1, 0);
+    
+    if (PlayerNr == 0)
+        LED1_ON
+    else
+        LED3_ON
+    	 
     return 1;
 }
 
@@ -291,9 +364,45 @@ void DeletePlayer(uint8_t PlayerNr)
     if (PlayerNr > 1 || PlayerNr < 0) //Ungültige Nummer
     	return;
     
-    player[PlayerNr].posy = 0;
+    draw_string(player[PlayerNr].Name, PlayerNr * (screenx - FIELD_SPACE + 2), CTP_Y(1) + 3, 0, 0); //Spielernamen löschen
+    
+    DEBUG("\n\nDelete IP: ");
+    print_ip(player[PlayerNr].IpAddress);
+    
+    if(player[PlayerNr].IpAddress != IP(0,0,0,0))
+    {
+       strcpy(eth_buffer[UDP_DATA_START], "Disc"); //Disconnect an gelöschten Spieler senden, damit er das mitbekommt
+       create_new_udp_packet(4, GAME_PORT, GAME_PORT, player[PlayerNr].IpAddress); 
+    }
+      
+    player[PlayerNr].posy = PLAYER_LINE_START;
+    player[PlayerNr].posyo = 0;
+    player[PlayerNr].points = 0;
     player[PlayerNr].IpAddress = IP(0,0,0,0);
     
     for (uint8_t i = 0; i < NAME_SIZE; i++)
         player[PlayerNr].Name[i] = NULL;
+          
+    gamestatus = 0; //Es wird wieder auf Spieler gewartet
+
+    if (PlayerNr == 0)
+        LED1_OFF
+    else
+        LED3_OFF
+}
+
+void ClearUdp(unsigned char* UdpData, uint8_t DataSize) //Zum nullen der Empfangspuffer Sicherung
+{
+    for (uint8_t i = 0; i < DataSize; i++)
+        UdpData[i] = NULL;
+}
+
+void print_ip(unsigned long ip)
+{
+    unsigned char bytes[4];
+    bytes[0] = ip & 0xFF;
+    bytes[1] = (ip >> 8) & 0xFF;
+    bytes[2] = (ip >> 16) & 0xFF;
+    bytes[3] = (ip >> 24) & 0xFF;
+    usart_write("%i.%i.%i.%i\n", bytes[0], bytes[1], bytes[2], bytes[3]);
 }

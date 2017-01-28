@@ -38,7 +38,7 @@ typedef unsigned char byte;
 
 #define screenx         128
 #define screeny         64
-#define FLIP_SCREEN     0
+#define FLIP_SCREEN     1
 
 void trigger();
 void glcd_on();

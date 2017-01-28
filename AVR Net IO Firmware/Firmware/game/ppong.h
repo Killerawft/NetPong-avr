@@ -23,6 +23,8 @@
 
 
 #define BALL_SIZE           3                                       //Radius des Balls
+#define BALL_HITBX          1                                       //Hitboxgröße des Balls vom Mittelpunkt aus
+
 #define PLAYER_SIZE         10                                      //Breite des Spielerbalkens, muss durch 2 teilbar sein
 #define FIELD_SIZE          64                                      //Feldgröße -> Feld ist immer rechteckig
 #define FIELD_SPACE         32                                      //Bereich neben dem Feld
@@ -33,12 +35,18 @@
 #define FIELD_CENTER_X      FIELD_SPACE + (FIELD_SIZE / 2)          //X Mittelpunkt des Feldes
 #define FIELD_CENTER_Y      (FIELD_SIZE / 2)                        //Y Mittelpunkt des Feldes
 
-#define NAME_SIZE           10                                      //Maximale Länge des Spielernamens
+#define NAME_SIZE           5                                       //Maximale Länge des Spielernamens
 
+#define WIN_POINTS          1                                       //Punkte bis SPiel gewonnen
+#define POINTS_X1           14                                      //X Koordinate für Punkte von Spieler 1
+#define POINTS_X2           FIELD_SPACE + FIELD_SIZE + 14           //X Koordinate für Punkte von Spieler 2
+#define POINTS_Y            screeny / 2                             //Y Koordinate für Punkte von beiden Spielern
+            
 #include "../config.h"
 #include "glcd.h"
 #include "text.h"
-
+#include "../usart.h"
+#include "../stack.h"
 
 struct pong_ballstruct{
     int8_t speedx; 
@@ -52,6 +60,7 @@ struct pong_playerstruct{
     uint8_t posyo;
     unsigned long IpAddress;
     unsigned char Name[NAME_SIZE];
+    uint8_t points;
 };
 
 struct pong_ballstruct ball;// = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};

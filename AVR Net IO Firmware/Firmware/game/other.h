@@ -27,7 +27,7 @@ extern const char intro1[16] PROGMEM;
 extern uint8_t init_random_done;
 
 //Funktionsprototypen:
-void wordtostr(char *s, u16 nummer, uint8_t digits, uint8_t strposition);
+void wordtostr(char *s, uint16_t nummer, uint8_t digits, uint8_t strposition);
 uint8_t max(uint8_t val1, uint8_t val2);
 uint8_t min(uint8_t val1, uint8_t val2);
 

@@ -27,73 +27,51 @@ void pong_drawball(byte c)
     h_line(ball.posx, ball.posy + 1, BALL_SIZE, 0, c);
 }
 
-static void pong_moveball(uint8_t play1pos, uint8_t play2pos) {
-int8_t tmpdiff;
-pong_drawball(0); //Alten Ball löschen
-ball.posx += ball.speedx;
-if (ball.posx == 1) { //Linke Wand
-  ball.speedx = 1;
-}
-if (ball.posx == screeny) { //Rechte Wand
-  ball.speedx = -1;
-}
-ball.posy += ball.speedy;
-if (ball.posy == 1) { //Obere Wand
-  tmpdiff = ball.posx - play2pos; //Links ist negativ, rechts positiv
-  if ((tmpdiff >= -1) && (tmpdiff <= 1)) {
-    ball.speedy = 1;
-  }
-  if (tmpdiff == -2) {
-    if (ball.speedx == 1) { //Stoppt horizontale Bewegung
-      ball.speedy = 1;
-      ball.speedx = 0;
-    } else
-    if (ball.speedx == 0) { //Startet horizontale Bewegung
-      ball.speedy = 1;
-      ball.speedx = -1;
+void pong_moveball(void) 
+{
+
+    pong_drawball(0); //Alten Ball löschen
+
+    if (ball.posx == PLAYER_1_RANGE + BALL_HITBX && ball.posy < player[0].posy + PLAYER_SIZE + BALL_HITBX && ball.posy > player[0].posy - BALL_HITBX - 1) //Treffen auf Spielerbalken 1
+    {
+        DEBUG("Spielerbalken 1 getroffen\n");
+        ball.speedx = ball.speedx * -1;
+    }else if (ball.posx == PLAYER_2_RANGE - BALL_SIZE && ball.posy < player[1].posy + PLAYER_SIZE + BALL_HITBX && ball.posy > player[1].posy - BALL_HITBX - 1) //Treffen auf Spielerbalken 2
+    {
+        DEBUG("Spielerbalken 2 getroffen\n");
+        ball.speedx = ball.speedx * -1;  
+    }else if (ball.posx == FIELD_SPACE + BALL_HITBX) { //Linke Wand vom Spieler 1
+        DEBUG("Linke Wand getroffen\n");
+        
+        ball.speedx = ball.speedx * -1;
+  
+        draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 0);
+        player[1].points++;                       //Punkt für Spieler 2
+        draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 1);
+    }else if (ball.posx == FIELD_SPACE + FIELD_SIZE - BALL_SIZE) { //Rechte Wand vom Spieler 2
+        DEBUG("Rechte Wand getroffen\n");
+        
+        ball.speedx = ball.speedx * -1;
+
+        draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 0);
+        player[0].points++;             //Punkt für Spieler 1
+        draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 1);
+    }else if (ball.posy ==  1 + BALL_HITBX) { //Obere Wand
+        DEBUG("Obere Wand getroffen\n");
+
+        ball.speedy = ball.speedy * -1;
+    }else if (ball.posy == screeny - BALL_SIZE) { //Untere Wand
+        DEBUG("Untere Wand getroffen\n");
+
+        ball.speedy = ball.speedy * -1;       
     }
-  }
-  if (tmpdiff == 2) {
-    if (ball.speedx == -1) { //Stoppt horizontale Bewegung
-      ball.speedy = 1;
-      ball.speedx = 0;
-    } else
-    if (ball.speedx == 0) { //Startet horizontale Bewegung
-      ball.speedy = 1;
-      ball.speedx = 1;
-    }
-  }
-}
-if (ball.posy == 14) { //Untere Wand
-  tmpdiff = ball.posx - play1pos; //Links ist negaktiv, rechts positiv
-  if ((tmpdiff >= -1) && (tmpdiff <= 1)) {
-    ball.speedy = -1;
-  }
-  if (tmpdiff == -2) {
-    if (ball.speedx == 1) { //Stoppt horizontale Bewegung
-      ball.speedy = -1;
-      ball.speedx = 0;
-    } else
-    if (ball.speedx == 0) { //Startet horizontale Bewegung
-      ball.speedy = -1;
-      ball.speedx = -1;
-    }
-  }
-  if (tmpdiff == 2) {
-    if (ball.speedx == -1) { //Stoppt horizontale Bewegung
-      ball.speedy = -1;
-      ball.speedx = 0;
-    } else
-    if (ball.speedx == 0) { //Startet horizontale Bewegung
-      ball.speedy = -1;
-      ball.speedx = 1;
-    }
-  }
-}
-pong_drawball(1); //Neuen Ball zeichnen
+    
+    ball.posx += ball.speedx;
+    ball.posy += ball.speedy;
+    pong_drawball(1); //Neuen Ball zeichnen
 }
 
-static void pong_endabs(uint8_t gameend) {
+void pong_endabs(uint8_t gameend) {
 uint8_t color = 0x32;
 //Spiel wird mit Ausgaben gewonnen/verloren/unentschieden beendet
 if (gameend == 1) { //Spieler 1 gewinnt
@@ -105,32 +83,51 @@ if (gameend == 2) { //Spieler 2 gewinnt
 
 }
 
-static void pong_drawplayers(void) {
+void pong_drawplayers(void) {
 //Zeichnen der Spielerposition
-if (player[0].posy != player[0].posyo) { //Wenn LCD Kontakte oben, Player1 ist links
+if (player[0].posy != player[0].posyo && player[0].posy < screeny - PLAYER_SIZE && player[0].posy > 0) { //Wenn LCD Kontakte oben, Player1 ist links
   v_line(PLAYER_1_RANGE, player[0].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
   v_line(PLAYER_1_RANGE, player[0].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
+  player[0].posyo = player[0].posy;
+}else if (player[0].posy >= screeny && player[0].posy <= 0)
+{
+    player[0].posy = player[0].posyo; //Position zurücksetzten, da auserhalb des Bildschirms gehen würde 
 }
-if (player[1].posy != player[1].posyo) { //Wenn LCD Kontakte oben, Player2 ist rechts
+if (player[1].posy != player[1].posyo && player[1].posy < screeny - PLAYER_SIZE && player[1].posy > 0) { //Wenn LCD Kontakte oben, Player2 ist rechts
   v_line(PLAYER_2_RANGE, player[1].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
   v_line(PLAYER_2_RANGE, player[1].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
-}
-}
-
-
-void pong_draw_field(void) //Spielfeld malen
+  player[1].posyo = player[1].posy;
+}else if (player[1].posy >= screeny && player[1].posy <= 0)
 {
-    rectangle(FIELD_SPACE,0, FIELD_SIZE + FIELD_SPACE, FIELD_SIZE - 1, 0, 1);   //Feld Umrandung
-    pong_drawplayers();
-    pong_drawball(1);                        //Ball in der Mitte Platzieren
+  player[1].posy = player[1].posyo; //Position zurücksetzten, da auserhalb des Bildschirms gehen würde   
 }
+}
+
 
 void draw_start_screen() //Startbildschirm malen
-{
-    pong_draw_field();
+{   
+    pong_drawplayers();
+    
+    draw_string("Sp1", 0, 0, 1, 0);
+    draw_string("Sp2", screenx - FIELD_SPACE + 2, 0, 1, 0);
+    
+    draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 1);
+    draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 1);
+    
+    rectangle(FIELD_SPACE,0, FIELD_SIZE + FIELD_SPACE, FIELD_SIZE - 1, 0, 1);   //Feld Umrandung
+}
 
-    //draw_string("Sp 1", 20,20, 1, 1);
-    //draw_string("Sp 2", 128 - CTP_X(3),64 - CTP_Y(1), 1, 1);
+void reset_game(void)
+{
+    ball.posx = FIELD_CENTER_X;
+    ball.posy = FIELD_CENTER_Y;
+    ball.speedx = 0;
+    ball.speedy = 0;
+    
+    DeletePlayer(0);
+    DeletePlayer(1);
+            
+    draw_start_screen();
 }
 
 ISR(TIMER0_OVF_vect) //Timer Overflow ca alle 0,001 s | FrameTimer
@@ -139,7 +136,6 @@ ISR(TIMER0_OVF_vect) //Timer Overflow ca alle 0,001 s | FrameTimer
     
     if (tick >= 1000) //einmal in der Sekunde
     {
-        LED2_TOGGLE
         tick = 0;
     }
     

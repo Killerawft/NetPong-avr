@@ -27,7 +27,7 @@
 
 #define CWDT        6        //Pixel breite eines Zeichens
 #define CHGT        7        //Pixel Höhe eines Zeichens
-#define CTP_X(x)    x*CWDT   //X Buchstaben umrechnen in Pixelanzahl auf x achse
+#define CTP_X(x)    x*CWDT+1 //X Buchstaben umrechnen in Pixelanzahl auf x achse
 #define CTP_Y(x)    x*CHGT   //X Buchstaben umrechnen in Pixelanzahl auf y achse
 
 /* draw_char prüft, vor dem schreiben auf das Display ob die Position
