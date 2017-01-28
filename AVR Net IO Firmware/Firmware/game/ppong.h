@@ -61,6 +61,8 @@ struct pong_playerstruct{
     unsigned long IpAddress;
     unsigned char Name[NAME_SIZE];
     uint8_t points;
+    uint8_t connected;
+    uint8_t retry;
 };
 
 struct pong_ballstruct ball;// = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};

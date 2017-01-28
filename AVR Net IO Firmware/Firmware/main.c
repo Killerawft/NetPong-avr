@@ -197,15 +197,17 @@ int main(void)
                     gamestatus = GAME_RUNNING; //Spiel starten
                     DEBUG("\nGamestatus 2\n");
                     
-                }else if (gamestatus == 2)
+                }else if (gamestatus == 2) //Spiel animieren
                 {
                     pong_moveball();
                     
                     if (player[0].points >= WIN_POINTS || player[1].points >= WIN_POINTS) //Das SPiel wurde gewonnen
                         gamestatus = GAME_END;
                     	
-                }                
-                	              
+                }
+
+                TestConnection(0); //Verbindung zu den Spielern testen
+                TestConnection(1);	              
                     
 			}			
 		#endif
@@ -265,10 +267,12 @@ void UdpParse(void)
                 
            pong_drawplayers(); //Erstmal hier direkt zeichnen
        }       
-            	
-       	
-       
-   }       
+     
+   }else if (UdpData[0] == 'C') //Verbindungsabfrage Antwort von Spieler
+   {
+       player[UdpData[1] - 48].connected = 1; //Verbindung wieder hergestellt
+       player[UdpData[1] - 48].retry = 0;
+   }    
     
     ClearUdp(UdpData, DataSize); //Speicher nullen
     free(UdpData); //Speicherplatz wieder frei geben
@@ -379,6 +383,8 @@ void DeletePlayer(uint8_t PlayerNr)
     player[PlayerNr].posyo = 0;
     player[PlayerNr].points = 0;
     player[PlayerNr].IpAddress = IP(0,0,0,0);
+    player[PlayerNr].connected = 0;
+    player[PlayerNr].retry = 0;
     
     for (uint8_t i = 0; i < NAME_SIZE; i++)
         player[PlayerNr].Name[i] = NULL;
@@ -389,6 +395,29 @@ void DeletePlayer(uint8_t PlayerNr)
         LED1_OFF
     else
         LED3_OFF
+}
+
+void TestConnection(uint8_t PlayerNr) //Verbindung zu Spieler testen
+{
+    if (player[PlayerNr].Name[PlayerNr] != NULL && player[PlayerNr].connected == 1) //Verbindung testen Paket senden
+    {
+        player[PlayerNr].connected = 0; //Verbindung wird als Unterbrochen angenommen
+        player[PlayerNr].retry = 1; //Erster Versuch
+                        
+        strcpy(eth_buffer[UDP_DATA_START], "CON");
+        create_new_udp_packet(3, GAME_PORT, GAME_PORT, player[PlayerNr].IpAddress);
+    }else if (player[PlayerNr].Name[PlayerNr] != NULL && player[PlayerNr].connected == 0 && player[PlayerNr].retry <= RETRYS) //Es kann noch versucht werden weiter zu senden
+    {
+        player[PlayerNr].retry++;
+        strcpy(eth_buffer[UDP_DATA_START], "CON");
+        create_new_udp_packet(3, GAME_PORT, GAME_PORT, player[PlayerNr].IpAddress);
+    }else if (player[PlayerNr].Name[PlayerNr] != NULL && player[PlayerNr].connected == 0 && player[PlayerNr].retry > RETRYS)  //Verbindung abgebrochen
+    {
+        DEBUG("\n\nVerbindung zu Spieler %i verloren\n", PlayerNr + 1);
+        DeletePlayer(0);
+        DeletePlayer(1);
+        gamestatus = 1;  //Spiel abbrechen
+    }
 }
 
 void ClearUdp(unsigned char* UdpData, uint8_t DataSize) //Zum nullen der Empfangspuffer Sicherung
