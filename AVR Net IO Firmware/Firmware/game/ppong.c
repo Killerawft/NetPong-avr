@@ -35,60 +35,59 @@ void pong_moveball(void)
     if (ball.posx == PLAYER_1_RANGE + BALL_HITBX && ball.posy < player[0].posy + PLAYER_SIZE + BALL_HITBX && ball.posy > player[0].posy - BALL_HITBX - 1) //Treffen auf Spielerbalken 1
     {
         DEBUG("Spielerbalken 1 getroffen\n");
-        ball.speedx = ball.speedx * -1;
+        ball.speedx = ball.speedx * (-1);
+        
     }else if (ball.posx == PLAYER_2_RANGE - BALL_SIZE && ball.posy < player[1].posy + PLAYER_SIZE + BALL_HITBX && ball.posy > player[1].posy - BALL_HITBX - 1) //Treffen auf Spielerbalken 2
     {
         DEBUG("Spielerbalken 2 getroffen\n");
-        ball.speedx = ball.speedx * -1;  
+        ball.speedx = ball.speedx * (-1); 
+         
     }else if (ball.posx == FIELD_SPACE + BALL_HITBX) { //Linke Wand vom Spieler 1
-        DEBUG("Linke Wand getroffen\n");
-        
-        ball.speedx = ball.speedx * -1;
+        DEBUG("Linke Wand getroffen\n");       
+        ball.speedx = ball.speedx * (-1);
   
         draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 0);
         player[1].points++;                       //Punkt für Spieler 2
         draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 1);
-    }else if (ball.posx == FIELD_SPACE + FIELD_SIZE - BALL_SIZE) { //Rechte Wand vom Spieler 2
-        DEBUG("Rechte Wand getroffen\n");
         
-        ball.speedx = ball.speedx * -1;
+    }else if (ball.posx == FIELD_SPACE + FIELD_SIZE - BALL_SIZE) { //Rechte Wand vom Spieler 2
+        DEBUG("Rechte Wand getroffen\n");    
+        ball.speedx = ball.speedx * (-1);
 
         draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 0);
         player[0].points++;             //Punkt für Spieler 1
         draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 1);
+        
     }else if (ball.posy ==  1 + BALL_HITBX) { //Obere Wand
         DEBUG("Obere Wand getroffen\n");
-
-        ball.speedy = ball.speedy * -1;
+        ball.speedy = ball.speedy * (-1);
+        
     }else if (ball.posy == screeny - BALL_SIZE) { //Untere Wand
         DEBUG("Untere Wand getroffen\n");
-
-        ball.speedy = ball.speedy * -1;       
+        ball.speedy = ball.speedy * (-1);
+              
     }
+
     
     ball.posx += ball.speedx;
     ball.posy += ball.speedy;
     pong_drawball(1); //Neuen Ball zeichnen
 }
 
-void pong_drawplayers(void) {
-//Zeichnen der Spielerposition
-if (player[0].posy != player[0].posyo && player[0].posy < screeny - PLAYER_SIZE && player[0].posy > 0) { //Wenn LCD Kontakte oben, Player1 ist links
-  v_line(PLAYER_1_RANGE, player[0].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
-  v_line(PLAYER_1_RANGE, player[0].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
-  player[0].posyo = player[0].posy;
-}else if (player[0].posy >= screeny && player[0].posy <= 0)
+void pong_drawplayers(void) 
 {
-    player[0].posy = player[0].posyo; //Position zurücksetzten, da auserhalb des Bildschirms gehen würde 
-}
-if (player[1].posy != player[1].posyo && player[1].posy < screeny - PLAYER_SIZE && player[1].posy > 0) { //Wenn LCD Kontakte oben, Player2 ist rechts
-  v_line(PLAYER_2_RANGE, player[1].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
-  v_line(PLAYER_2_RANGE, player[1].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
-  player[1].posyo = player[1].posy;
-}else if (player[1].posy >= screeny && player[1].posy <= 0)
-{
-  player[1].posy = player[1].posyo; //Position zurücksetzten, da auserhalb des Bildschirms gehen würde   
-}
+    //Zeichnen der Spielerposition
+    if (player[0].posy != player[0].posyo) { //Wenn LCD Kontakte oben, Player1 ist links
+        v_line(PLAYER_1_RANGE, player[0].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
+        v_line(PLAYER_1_RANGE, player[0].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
+        player[0].posyo = player[0].posy;
+    }
+
+    if (player[1].posy != player[1].posyo) { //Wenn LCD Kontakte oben, Player2 ist rechts
+        v_line(PLAYER_2_RANGE, player[1].posyo, PLAYER_SIZE, 0, 0);  //Löschen an alter Position
+        v_line(PLAYER_2_RANGE, player[1].posy, PLAYER_SIZE, 0, 1); //Zeichnen an neuer Position
+        player[1].posyo = player[1].posy;
+    }
 }
 
 
