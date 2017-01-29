@@ -74,7 +74,7 @@ int main(void)
     glcd_init();
     //Ladescreen anzeigen
     draw_string("Net_Pong", FIELD_CENTER_X - CTP_X(3), FIELD_CENTER_Y - 10, 1, 0);
-    draw_string("Loading...", FIELD_CENTER_X - CTP_X(3) + 4, FIELD_CENTER_Y - 3, 1, 0);
+    draw_string("Loading...", FIELD_CENTER_X - CTP_X(3) + 2, FIELD_CENTER_Y - 3, 1, 0);
     
     DDRA = 0x70; //Port 6, 5, 4 als Ausgang für LED's
     LED1_OFF
@@ -186,7 +186,7 @@ int main(void)
                     ball.posx = FIELD_CENTER_X;
                     ball.posy = FIELD_CENTER_Y;
                     
-                    ball.speedx = -1; //Ball in eine Richtung bewegen
+                    ball.speedx = 1; //Ball in eine Richtung bewegen
                     ball.speedy = -1;
                     gamestatus = GAME_RUNNING; //Spiel starten
                     DEBUG("\nGamestatus 2\n");                   
