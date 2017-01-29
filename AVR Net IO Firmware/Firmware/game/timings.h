@@ -22,9 +22,6 @@
  #define TIMINGS_H
 
 void waitms(uint16_t zeitms);
-void FrameTimerInit(void); //Lößt ca alle 0,001 s aus
-void FrameTimerStart(void);
-void FrameTimerStop(void);
 
 
 #endif

@@ -71,18 +71,6 @@ void pong_moveball(void)
     pong_drawball(1); //Neuen Ball zeichnen
 }
 
-void pong_endabs(uint8_t gameend) {
-uint8_t color = 0x32;
-//Spiel wird mit Ausgaben gewonnen/verloren/unentschieden beendet
-if (gameend == 1) { //Spieler 1 gewinnt
-  
-}
-if (gameend == 2) { //Spieler 2 gewinnt
-  
-}
-
-}
-
 void pong_drawplayers(void) {
 //Zeichnen der Spielerposition
 if (player[0].posy != player[0].posyo && player[0].posy < screeny - PLAYER_SIZE && player[0].posy > 0) { //Wenn LCD Kontakte oben, Player1 ist links
@@ -114,11 +102,16 @@ void draw_start_screen() //Startbildschirm malen
     draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 1);
     draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 1);
     
+    draw_string("Warte auf", FIELD_CENTER_X - CTP_X(4) + 2, FIELD_CENTER_Y - CTP_Y(1) - 1, 1, 0);
+    draw_string("Spieler", FIELD_CENTER_X - CTP_X(3) + 2, FIELD_CENTER_Y, 1, 0);
+    
     rectangle(FIELD_SPACE,0, FIELD_SIZE + FIELD_SPACE, FIELD_SIZE - 1, 0, 1);   //Feld Umrandung
 }
 
 void reset_game(void)
 {
+    glcd_clear();
+    
     ball.posx = FIELD_CENTER_X;
     ball.posy = FIELD_CENTER_Y;
     ball.speedx = 0;
@@ -128,18 +121,4 @@ void reset_game(void)
     DeletePlayer(1);
             
     draw_start_screen();
-}
-
-ISR(TIMER0_OVF_vect) //Timer Overflow ca alle 0,001 s | FrameTimer
-{
-    static uint16_t tick = 0;
-    
-    if (tick >= 1000) //einmal in der Sekunde
-    {
-        tick = 0;
-    }
-    
-    
-    tick++;
-    TCNT0 = 100;                    //Preload 100
 }

@@ -29,20 +29,3 @@ void waitms(uint16_t zeitms) {
     _delay_ms(1);//Jeder Duchlauf mit n=1 benötigt 4 Takte
   }
 }
-
-void FrameTimerInit(void) //Lößt ca alle 0,001 s aus
-{
-    TCCR0B |= (1<<CS02) | (1<<CS00); //Prescaler 1024
-    
-    TCNT0 = 100;                    //Preload 100
-}
-
-void FrameTimerStart(void)
-{
-    TIMSK0 |= (1<<TOIE0);    //Interrupt einschalten
-}
-
-void FrameTimerStop(void)
-{
-    TIMSK0 &= ~(1<<TOIE0);  //Interrupt ausschalten
-}

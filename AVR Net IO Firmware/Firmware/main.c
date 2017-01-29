@@ -71,6 +71,11 @@ int main(void)
 	
     uint8_t Countdwn = 4;
     
+    glcd_init();
+    //Ladescreen anzeigen
+    draw_string("Net_Pong", FIELD_CENTER_X - CTP_X(3), FIELD_CENTER_Y - 10, 1, 0);
+    draw_string("Loading...", FIELD_CENTER_X - CTP_X(3) + 2, FIELD_CENTER_Y - 3, 1, 0);
+    
     DDRA = 0x70; //Port 6, 5, 4 als Ausgang für LED's
     LED1_OFF
     LED2_OFF
@@ -87,17 +92,11 @@ int main(void)
 	//Applikationen starten
 	stack_init();
     
-    glcd_init();
-    
-    FrameTimerInit();
-    
 	//Ethernetcard Interrupt enable
 	ETH_INT_ENABLE;
 	
 	//Globale Interrupts einschalten
-	sei(); 
-		
-    //FrameTimerStart();   
+	sei();    
         
     usart_write("\r\nIP   %1i.%1i.%1i.%1i\r\n", myip[0]     , myip[1]     , myip[2]     , myip[3]);
     usart_write("MASK %1i.%1i.%1i.%1i\r\n", netmask[0]  , netmask[1]  , netmask[2]  , netmask[3]);
@@ -114,6 +113,8 @@ int main(void)
         //Spiel steuerung
         if (player[0].Name[0] != NULL && player[1].Name[0] != NULL && gamestatus == WAIT_FOR_PLAYER) //Beide Spieler angemeldet, und Spiel läuft nicht -> Spiel kann starten
         {
+            draw_string("Warte auf", FIELD_CENTER_X - CTP_X(4) + 2, FIELD_CENTER_Y - CTP_Y(1) - 1, 0, 0); //Warte auf Spieler TExt löschen
+            draw_string("Spieler", FIELD_CENTER_X - CTP_X(3) + 2, FIELD_CENTER_Y, 0, 0);
             gamestatus = COUNTDOWN;
             DEBUG("\nGamestatus 1\n");
         }else if (gamestatus == GAME_END) //Spiel beendet, gewinner anzeigen
@@ -126,15 +127,8 @@ int main(void)
                 draw_string(player[1].Name, FIELD_CENTER_X - CTP_X(4), FIELD_CENTER_Y, 1, 0);
         
            reset_game();           	 
-        }         
-        
-        
-        
-        
-        
-        
-        
-        
+        }                  
+
 	    eth_get_data();
 				
         //Terminalcommandos auswerten
@@ -189,27 +183,19 @@ int main(void)
                     //strcpy(eth_buffer[UDP_DATA_START], "Go");
 
                     //pong_drawball(1);
-                    ball.posx = FIELD_SPACE + FIELD_SIZE - 10;
-                    ball.posy = PLAYER_LINE_START - 1;
+                    ball.posx = FIELD_CENTER_X;
+                    ball.posy = FIELD_CENTER_Y;
                     
                     ball.speedx = 1; //Ball in eine Richtung bewegen
-                    ball.speedy = 0;
+                    ball.speedy = -1;
                     gamestatus = GAME_RUNNING; //Spiel starten
-                    DEBUG("\nGamestatus 2\n");
-                    
-                }else if (gamestatus == 2) //Spiel animieren
-                {
-                    pong_moveball();
-                    
-                    if (player[0].points >= WIN_POINTS || player[1].points >= WIN_POINTS) //Das SPiel wurde gewonnen
-                        gamestatus = GAME_END;
-                    	
+                    DEBUG("\nGamestatus 2\n");                   
                 }
 
-                TestConnection(0); //Verbindung zu den Spielern testen
-                TestConnection(1);	              
-                    
-			}			
+                //TestConnection(0); //Verbindung zu den Spielern testen
+                //TestConnection(1);	                      
+			}	
+            		
 		#endif
     }//while (1)
 		
@@ -222,8 +208,9 @@ void UdpParse(void)
     uint8_t DataCnt = 0;
     uint8_t DataSize = UDP_DATA_END_VAR - UDP_DATA_START;   //Länge der Nutzdaten ist das Erste Byte der Daten
     
-    DEBUG("\n\n\nNeues Paket der Länge %i\n", DataSize);
-
+    DEBUG("\n\n\nNeues Paket der Länge %i", DataSize);
+    //print_ip(eth_buffer[IP_OFFSET]);
+    
     LED2_TOGGLE //Datenempfang signalisieren
     
     if ((UdpData = malloc(DataSize + 1)) == NULL)
@@ -237,8 +224,8 @@ void UdpParse(void)
     
     for (uint8_t i = 0; i < DataSize; i++)
         UdpData[i] = eth_buffer[UDP_DATA_START + i];
-    
-    DEBUG("UDP Daten: %s\n\n", UdpData);
+
+    DEBUG("\nUDP Daten: %s\n\n", UdpData);
     
     //Daten Analysieren
    if (UdpData[0] == 'N')   //Neuer Spieler
@@ -251,27 +238,22 @@ void UdpParse(void)
        if (UdpData[DataCnt] == 'M' && player[PlayerNr].Name[0] != NULL) //Move Befehl wenn Spieler vorhanden
        {        
            DataCnt++;
-  
-           if (player[PlayerNr].posy > PLAYER_SIZE + 1 && player[PlayerNr].posy < screeny - 1)
-           {
-                DEBUG("Spieler %i bewegen\n", PlayerNr + 1);
-                if ((UdpData[DataCnt] == 'R' && PlayerNr == 0) || (UdpData[DataCnt] == 'L' && PlayerNr == 1)) //Spieler 1 nach Rechts bewegen aus seiner Sicht also nach oben
-                    player[PlayerNr].posy++;
-                else if ((UdpData[DataCnt] == 'L' && PlayerNr == 0) || (UdpData[DataCnt] == 'R' && PlayerNr == 1))               	
-                    player[PlayerNr].posy--;
-           }else
-           {
-               DEBUG("Spieler %i bleibt stehen\n", PlayerNr + 1);
-               player[PlayerNr].posy = player[PlayerNr].posyo;
-           }                      
-                
-           pong_drawplayers(); //Erstmal hier direkt zeichnen
+              
+           if (((UdpData[DataCnt] == 'R' && PlayerNr == 0) || (UdpData[DataCnt] == 'L' && PlayerNr == 1)) && player[PlayerNr].posy < screeny - PLAYER_SIZE - 1) //Spieler 1 nach Rechts bewegen aus seiner Sicht also nach oben
+               player[PlayerNr].posy++;
+           else if (((UdpData[DataCnt] == 'L' && PlayerNr == 0) || (UdpData[DataCnt] == 'R' && PlayerNr == 1)) && player[PlayerNr].posy > 1)               	
+               player[PlayerNr].posy--;    
+           
+           DEBUG(" Spieler %i auf Position %i\n", PlayerNr + 1, player[PlayerNr].posy);                 
        }       
      
    }else if (UdpData[0] == 'C') //Verbindungsabfrage Antwort von Spieler
    {
        player[UdpData[1] - 48].connected = 1; //Verbindung wieder hergestellt
        player[UdpData[1] - 48].retry = 0;
+   }else if (UdpData[0] == 'D') //Verbindung zu Spieler trennen
+   {
+       DeletePlayer(UdpData[1] - 48);
    }    
     
     ClearUdp(UdpData, DataSize); //Speicher nullen
@@ -380,7 +362,8 @@ void DeletePlayer(uint8_t PlayerNr)
     }
       
     player[PlayerNr].posy = PLAYER_LINE_START;
-    player[PlayerNr].posyo = 0;
+    pong_drawplayers(); //Spieler an neuer Position zeichnen, danach erst alte Position löschen, sonst wird der alte Balken nicht gelöscht
+    player[PlayerNr].posyo = PLAYER_LINE_START;
     player[PlayerNr].points = 0;
     player[PlayerNr].IpAddress = IP(0,0,0,0);
     player[PlayerNr].connected = 0;
@@ -390,6 +373,8 @@ void DeletePlayer(uint8_t PlayerNr)
         player[PlayerNr].Name[i] = NULL;
           
     gamestatus = 0; //Es wird wieder auf Spieler gewartet
+    
+    
 
     if (PlayerNr == 0)
         LED1_OFF

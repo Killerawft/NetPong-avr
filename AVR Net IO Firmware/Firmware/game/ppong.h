@@ -37,10 +37,13 @@
 
 #define NAME_SIZE           5                                       //Maximale Länge des Spielernamens
 
-#define WIN_POINTS          1                                       //Punkte bis SPiel gewonnen
+#define WIN_POINTS          5                                       //Punkte bis SPiel gewonnen
 #define POINTS_X1           14                                      //X Koordinate für Punkte von Spieler 1
 #define POINTS_X2           FIELD_SPACE + FIELD_SIZE + 14           //X Koordinate für Punkte von Spieler 2
 #define POINTS_Y            screeny / 2                             //Y Koordinate für Punkte von beiden Spielern
+
+#define PLAYER_SPEED        0                                       //Geschwindigkeit Spieler. Je höher, desto langsamer. 1 ca. alle 16ms neu zeichnen
+#define BALL_SPEED          2                                       //GEschwindigkeit vom Ball
             
 #include "../config.h"
 #include "glcd.h"
