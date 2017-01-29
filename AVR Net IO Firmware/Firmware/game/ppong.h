@@ -23,6 +23,8 @@
 
 
 #define BALL_SIZE           3                                       //Radius des Balls
+#define BALL_HITBX          1                                       //Hitboxgröße des Balls vom Mittelpunkt aus
+
 #define PLAYER_SIZE         10                                      //Breite des Spielerbalkens, muss durch 2 teilbar sein
 #define FIELD_SIZE          64                                      //Feldgröße -> Feld ist immer rechteckig
 #define FIELD_SPACE         32                                      //Bereich neben dem Feld
@@ -33,30 +35,40 @@
 #define FIELD_CENTER_X      FIELD_SPACE + (FIELD_SIZE / 2)          //X Mittelpunkt des Feldes
 #define FIELD_CENTER_Y      (FIELD_SIZE / 2)                        //Y Mittelpunkt des Feldes
 
-/* Interne Funktionen, die als static deklariert sind:
-static void pong_shotstart(struct pong_shotstruct *ball, u08 playpos,
-                           u08 playerno);
-static u08 pong_shotdown(struct pong_shotstruct *ball, u08 playpos,
-                         u08 playerno);
-static void pong_moveshot(struct pong_shotstruct *ball,
-                          struct pong_shotstruct *ball2);
-static u08 pong_ai_precalcball(struct pong_ballstruct *ball);
-static s08 pong_ai_analyze(struct pong_ballstruct *ball,
-             struct pong_shotstruct *shot1,
-             struct pong_shotstruct *shot2, u08 analyzepos, u08 player2pos);
-static u08 pong_ai(struct pong_ballstruct *ball, struct pong_shotstruct *shot1,
-          struct pong_shotstruct *shot2, u08 play1pos, u08 play2pos, u08 mode);
-static void pong_moveball(struct pong_ballstruct *ball, u08 play1pos,
-                          u08 play2pos);
-static void pong_endabs(u08 gameend);
-static void pong_drawplayers(u08 play1pos, u08 play1pos_o,
-                             u08 play2pos, u08 play2pos_o);
-static void pong_drawselectmenu(u08 mode);
-static u08 pong_selectmode(void);
-*/
+#define NAME_SIZE           5                                       //Maximale Länge des Spielernamens
 
-void pong_init();
-void draw_start_screen();
+#define WIN_POINTS          5                                       //Punkte bis SPiel gewonnen
+#define POINTS_X1           14                                      //X Koordinate für Punkte von Spieler 1
+#define POINTS_X2           FIELD_SPACE + FIELD_SIZE + 14           //X Koordinate für Punkte von Spieler 2
+#define POINTS_Y            screeny / 2                             //Y Koordinate für Punkte von beiden Spielern
 
+#define PLAYER_SPEED        0                                       //Geschwindigkeit Spieler. Je höher, desto langsamer. 1 ca. alle 16ms neu zeichnen
+#define BALL_SPEED          2                                       //GEschwindigkeit vom Ball
+            
+#include "../config.h"
+#include "glcd.h"
+#include "text.h"
+#include "../usart.h"
+#include "../stack.h"
+
+struct pong_ballstruct{
+    int8_t speedx; 
+    int8_t speedy;
+    uint8_t posx;
+    uint8_t posy;
+};
+
+struct pong_playerstruct{
+    uint8_t posy;
+    uint8_t posyo;
+    unsigned long IpAddress;
+    unsigned char Name[NAME_SIZE];
+    uint8_t points;
+    uint8_t connected;
+    uint8_t retry;
+};
+
+struct pong_ballstruct ball;// = {0, 0, FIELD_CENTER_X, FIELD_CENTER_Y};
+struct pong_playerstruct player[2];// = {{PLAYER_LINE_START, 0},{PLAYER_LINE_START, 0}};
 
 #endif

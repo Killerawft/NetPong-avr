@@ -146,7 +146,13 @@
     #define LED1_TOGGLE     PORTA ^= (1<<PA4);
     #define LED2_TOGGLE     PORTA ^= (1<<PA5);
     #define LED3_TOGGLE     PORTA ^= (1<<PA6);
-        
+    
+    
+    //Game Kommunikation Settings
+    #define GAME_PORT       2222     //Port über den die Kommunikation läuft
+    #define CNTRL_HEAD      3       //Anzahl an Bytes, die zur Typendeklaration des Pakettyps dienen, also z.B. N1; für neuer Spieler    
+    #define RETRYS          3       //Anzahl an Nachrichten an ein TEilnehmer bis Verbindung getrennt wird
+    
 #endif //_CONFIG_H
 
 

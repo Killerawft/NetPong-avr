@@ -34,7 +34,8 @@ Datum der letzten Änderung:
   2005-07-23: draw_tinynumber(), draw_tinydigit() hinzugefügt
 
 */
-#include "main.h"
+
+#include "glcd.h"
 #include "text.h"
 #include <string.h>
 #include <avr/pgmspace.h>
@@ -140,7 +141,8 @@ const char characters[] PROGMEM = {
 };
 
 
-uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color) 
+
+uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn) 
 {
 uint8_t nunbyte,charwidth,nunbit;
 uint8_t copyedbytes[5];
@@ -157,10 +159,20 @@ if (zeichen < 94) { //gültiges Zeichen
        tempx = posx+charwidth;
        tempy = posy+nunbit;
        if ((tempx < screenx) && (tempy < screeny)) {
+         if (turn == 1) //90° IUZ Drehen
+         {//Funktioniert noch nicht
+//             uint8_t ttempx = tempx; //tempvariable für temp koordianten
+//             tempx = CWDT - tempy - 1;   //X Koordinate ummappen
+//             tempy = ttempx;       //Y Koordinate ummappen mit vorher gespeicherten X Koordinate   
+         } 
+         else if (turn == 2) //90° GUZ Drehen
+         {
+             uint8_t ttemp; //tempvariable für temp koordianten
+         }
          if (color == 0) { //transparent
-           point_at(tempx, tempy, 0);
+           point_at(tempx , tempy, 0);
          }else{ //nicht transparent
-           point_at(tempx, tempy, 1);
+           point_at(tempx , tempy, 1);
          }
        }   //end: check range
      }     //end: there is a bit to write
@@ -173,12 +185,12 @@ if (zeichen < 94) { //gültiges Zeichen
 return charwidth++;
 }          //end: function
 
-void draw_string (char* c, uint8_t posx, uint8_t posy, uint8_t color)
+void draw_string (char* c, uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn)
 { // Sendet String an Display
 uint8_t i = 0;       //welches Zeichen gezeichnet wird
 const uint8_t end = strlen(c); //erspart Rechenzeit!
 while (i < end) {
- posx += draw_char(*(c+i), posx+i, posy, color);
+ posx += draw_char(*(c+i), posx+i, posy, color, turn);
   i++;  // Zeiger um 1 erhöhen
 }
 }
@@ -193,7 +205,7 @@ uint8_t tomove = end;//wie oft geschoben werden muss
 //Erstes Zeichnen um die maximale Länge zu ermitteln, jedoch nicht sichtbar
 if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
   while (i < end) { //Ermittelt die Textlänge in Pixel
-    tomove += draw_char(*(c+i), screenx, 0, 1);
+    tomove += draw_char(*(c+i), screenx, 0, 1, 0);
     i++;  // Zeiger um 1 erhöhen
   }
   tomove -= 2; //zwei Pixel weniger schieben
@@ -206,7 +218,7 @@ if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
     posx = screenx-1;
     i = 0;
     while (i < end) {
-      posx += draw_char(*(c+i), posx+i-posshift, posy, color);
+      posx += draw_char(*(c+i), posx+i-posshift, posy, color, 0);
       i++;  // Zeiger um 1 erhöhen
     }
     //Warten, damit der Text sichbar ist
@@ -215,7 +227,7 @@ if ((end < 36) && (end != 0)) { //maximale Textlänge = 35 Zeichen
 }
 }
 
-const u08 tinynumbers[] PROGMEM = {
+const uint8_t tinynumbers[] PROGMEM = {
 0x1f,0x11,0x1f, //0
 0x00,0x00,0x1f, //1
 0x1d,0x15,0x17, //2
@@ -229,7 +241,7 @@ const u08 tinynumbers[] PROGMEM = {
 };
 
 void draw_tinydigit(uint8_t ziffer, uint8_t posx,uint8_t posy, uint8_t color) {
-u08 nun, muster, pixely;
+uint8_t nun, muster, pixely;
 if (ziffer < 10) { //Bereichsüberprüfung
   for (nun = 0; nun <3; nun++) {
     muster = pgm_read_byte(tinynumbers +ziffer*3+nun);
@@ -244,7 +256,7 @@ if (ziffer < 10) { //Bereichsüberprüfung
 }
 
 void draw_tinynumber(uint16_t value, uint8_t posx, uint8_t posy, uint8_t color){
-u08 ziffern = 1,zvalue;
+uint8_t ziffern = 1,zvalue;
 
 if (value >= 10) { ziffern = 2; }
 if (value >= 100) { ziffern = 3; }

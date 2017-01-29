@@ -25,6 +25,10 @@
 #warning "Die Funktion scrolltext() erzeugt bei einer Bildschirmbreite von mehr als 249 Pixel Fehler!"
 #endif
 
+#define CWDT        6        //Pixel breite eines Zeichens
+#define CHGT        7        //Pixel Höhe eines Zeichens
+#define CTP_X(x)    x*CWDT+1 //X Buchstaben umrechnen in Pixelanzahl auf x achse
+#define CTP_Y(x)    x*CHGT   //X Buchstaben umrechnen in Pixelanzahl auf y achse
 
 /* draw_char prüft, vor dem schreiben auf das Display ob die Position
 innerhalb des gültigen Bereiches ist. Daher sind für posx und posy auch negative
@@ -32,9 +36,9 @@ oder zu große Werte kein Problem. Die Buchstaben sind dann normalerweise nicht
 sichtbar.
 Im schlimmsten Fall werden sie an die falsche Stelle auf dem Display gezeichnet.
 */
-uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color);
+uint8_t draw_char(uint8_t zeichen, uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn); //turn = 0 => Normal; turn = 1 =>90° IUZ; turn = 2 => 90° GUZ; Somit Playernr + 1 => Text für den Spieler richtig gedreht
 
-void draw_string(char* c,uint8_t posx, uint8_t posy, uint8_t color);
+void draw_string(char* c,uint8_t posx, uint8_t posy, uint8_t color, uint8_t turn);
 
 void scrolltext(char* c, uint8_t posy, uint8_t color, uint8_t bcolor, uint8_t waittime);
 

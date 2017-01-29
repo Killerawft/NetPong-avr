@@ -70,7 +70,14 @@ void timer_init (void)
 			TCCR1B |= (1<<WGM12) | (1<<CS10 | 0<<CS11 | 1<<CS12);
 			TCNT1 = 0;
 			OCR1A = (F_CPU / 1024) - 1;
-			TIMSK |= (1 << OCIE1A);
+			TIMSK1 |= (1 << OCIE1A);
+            
+            //ca. alle 16ms Überlauf
+            TCCR0B |= (1<<WGM02) | (1<<CS00 | 0<<CS01 | 1<<CS02);
+            TCNT0 = 0;
+            OCR0A = 250;
+            TIMSK0 |= (1<<OCIE0A);
+            
 	#endif
 return;
 };
@@ -107,4 +114,24 @@ return;
 	#if USE_ARTNET
 	artnet_tick();
 	#endif //USE_ARTNET
+}
+
+ISR (TIMER0_COMPA_vect)
+{
+    static uint8_t tick;
+    
+    
+    if (tick == PLAYER_SPEED || tick == BALL_SPEED) //Der Spielbalken ist doppel so schnell wie der Ball
+        pong_drawplayers(); //Spielbalken malen
+    if (tick == BALL_SPEED && gamestatus == 2) //Spiel läuft
+        pong_moveball();
+    
+    
+    if ((player[0].points >= WIN_POINTS || player[1].points >= WIN_POINTS) && gamestatus == 2) //Das Spiel wurde gewonnen
+        gamestatus = 3;
+        
+    tick++;
+    
+    if (tick > BALL_SPEED)
+    	tick = 0;
 }

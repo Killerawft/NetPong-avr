@@ -32,10 +32,14 @@
 		#define TIMSK TIMSK1
 	#endif 
 	
+    #include "game/ppong.h"
+    
 	volatile unsigned long time;
     volatile unsigned int  stack_watchdog;
     volatile unsigned char gp_timer;
 	void timer_init (void);
+ 
+    extern uint8_t gamestatus;
  
 #endif //_TIMER_H
 
