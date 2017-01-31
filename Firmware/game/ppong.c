@@ -69,8 +69,8 @@ void pong_moveball(void)
     }
 
     
-    ball.posx += ball.speedx;
-    ball.posy += ball.speedy;
+    ball.posx += ball.speedx * BALL_SPEED;
+    ball.posy += ball.speedy * BALL_SPEED;
     pong_drawball(1); //Neuen Ball zeichnen
 }
 

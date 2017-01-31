@@ -56,7 +56,7 @@ void ParseNewPlayer(unsigned char* UdpData);
 uint8_t NewPlayer(uint8_t PlayerNr, unsigned char* Name, unsigned long IpAddress);
 void DeletePlayer(uint8_t PlayerNr);
 void ClearUdp(unsigned char* UdpData, uint8_t DataSize);
-
+void MovePlayer(uint8_t Player, char Direction);
 
 uint8_t gamestatus = WAIT_FOR_PLAYER;        //0 Wenn auf Spieler gewartet wird | 1 Wenn das Spiel gestartet werden kann | 2 Wenn das Spiel gerade läuft | 3 Wenn das Spiel beendet ist.
 
@@ -237,13 +237,8 @@ void UdpParse(void)
        
        if (UdpData[DataCnt] == 'M' && player[PlayerNr].Name[0] != NULL) //Move Befehl wenn Spieler vorhanden
        {        
-           DataCnt++;
-              
-           if (((UdpData[DataCnt] == 'R' && PlayerNr == 0) || (UdpData[DataCnt] == 'L' && PlayerNr == 1)) && player[PlayerNr].posy < screeny - PLAYER_SIZE - 1) //Spieler 1 nach Rechts bewegen aus seiner Sicht also nach oben
-               player[PlayerNr].posy++;
-           else if (((UdpData[DataCnt] == 'L' && PlayerNr == 0) || (UdpData[DataCnt] == 'R' && PlayerNr == 1)) && player[PlayerNr].posy > 1)               	
-               player[PlayerNr].posy--;    
-           
+           DataCnt++;              
+           MovePlayer(PlayerNr, UdpData[DataCnt]); //Spieler bewegen            
            DEBUG(" Spieler %i auf Position %i\n", PlayerNr + 1, player[PlayerNr].posy);                 
        }       
      
@@ -258,6 +253,22 @@ void UdpParse(void)
     
     ClearUdp(UdpData, DataSize); //Speicher nullen
     free(UdpData); //Speicherplatz wieder frei geben
+}
+
+void MovePlayer(uint8_t Player, char Direction) //Gibt neue Sieler Y Koordinate zurück, je nach dem wie groß der PLAYER_SPEED ist und wie weite der Spieler sich bewegen darf
+{
+    if (((Direction == 'R' && Player == 0) || (Direction == 'L' && Player == 1)) && player[Player].posy < screeny - PLAYER_SIZE - 1) //Spieler bewegen sich auf untere Wand zu
+    {    if (player[Player].posy < screeny - PLAYER_SIZE - PLAYER_SPEED - 1)
+            player[Player].posy += PLAYER_SPEED;
+         else if (player[Player].posy < screeny - PLAYER_SIZE - 1)
+            player[Player].posy += screeny - player[Player].posy - PLAYER_SIZE - 1;
+    }            
+    else if (((Direction == 'L' && Player == 0) || (Direction == 'R' && Player == 1)) && player[Player].posy > 1) //Spieler bewegen sich auf obere Wand zu
+    {    if (player[Player].posy > PLAYER_SPEED) //Frei bewegen
+            player[Player].posy -= PLAYER_SPEED;
+         else if (player[Player].posy > 1)            //Auf letzte mögliche Position setzten
+            player[Player].posy -= PLAYER_SPEED - 2;
+    }            
 }
 
 void ParseNewPlayer(unsigned char* UdpData) //Daten für neuen SPieler parsen und versuchen Hinzuzufügen. Die UDP Response wird ebenfalls gesendet
@@ -364,6 +375,12 @@ void DeletePlayer(uint8_t PlayerNr)
     player[PlayerNr].posy = PLAYER_LINE_START;
     pong_drawplayers(); //Spieler an neuer Position zeichnen, danach erst alte Position löschen, sonst wird der alte Balken nicht gelöscht
     player[PlayerNr].posyo = PLAYER_LINE_START;
+    
+    if (PlayerNr == 0 && player[PlayerNr].points > 0)
+    	draw_tinynumber(player[0].points, POINTS_X1, POINTS_Y, 0);
+    if (PlayerNr == 1 && player[PlayerNr].points > 0)
+        draw_tinynumber(player[1].points, POINTS_X2, POINTS_Y, 0);
+    
     player[PlayerNr].points = 0;
     player[PlayerNr].IpAddress = IP(0,0,0,0);
     player[PlayerNr].connected = 0;
