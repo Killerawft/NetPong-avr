@@ -121,17 +121,18 @@ ISR (TIMER0_COMPA_vect)
     static uint8_t tick;
     
     
-    if (tick == PLAYER_SPEED || tick == BALL_SPEED) //Der Spielbalken ist doppel so schnell wie der Ball
+    if (player[0].Name[0] != NULL || player[1].Name[0] != NULL) //Der Spielbalken ist doppel so schnell wie der Ball
         pong_drawplayers(); //Spielbalken malen
-    if (tick == BALL_SPEED && gamestatus == 2) //Spiel läuft
+    if (gamestatus == 2 && tick > 1) //Spiel läuft
+    {
         pong_moveball();
+        tick = 0;
+    }        
     
     
     if ((player[0].points >= WIN_POINTS || player[1].points >= WIN_POINTS) && gamestatus == 2) //Das Spiel wurde gewonnen
         gamestatus = 3;
         
     tick++;
-    
-    if (tick > BALL_SPEED)
-    	tick = 0;
+
 }

@@ -187,7 +187,7 @@ int main(void)
                     ball.posy = FIELD_CENTER_Y;
                     
                     ball.speedx = -1; //Ball in eine Richtung bewegen
-                    ball.speedy = -1;
+                    ball.speedy = 0;
                     gamestatus = GAME_RUNNING; //Spiel starten
                     DEBUG("\nGamestatus 2\n");                   
                 }
@@ -235,7 +235,7 @@ void UdpParse(void)
        uint8_t PlayerNr = UdpData[1] - 48;
        DataCnt = CNTRL_HEAD;
        
-       if (UdpData[DataCnt] == 'M' && player[PlayerNr].Name[0] != NULL) //Move Befehl wenn Spieler vorhanden
+       if (UdpData[DataCnt] == 'M' && player[PlayerNr].Name[0] != NULL && player[PlayerNr].posy == player[PlayerNr].posyo) //Move Befehl wenn Spieler vorhanden und Bewegung ist ausgeührt
        {        
            DataCnt++;              
            MovePlayer(PlayerNr, UdpData[DataCnt]); //Spieler bewegen            

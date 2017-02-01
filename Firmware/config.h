@@ -48,8 +48,8 @@
 	#define IP(a,b,c,d) ((unsigned long)(d)<<24)+((unsigned long)(c)<<16)+((unsigned long)(b)<<8)+a
 
 	//IP des Webservers und des Routers
-	#define MYIP		IP(192,168,1,99)
-    #define ROUTER_IP	IP(192,168,1,1)
+	#define MYIP		IP(141,56,6,200)
+    #define ROUTER_IP	IP(141,56,6,254)
 
 	//Netzwerkmaske
 	#define NETMASK		IP(255,255,255,0)
@@ -62,7 +62,7 @@
   
     //DNS-Server
     #define USE_DNS     0 //1 = DNS Client on
-    #define DNS_IP      IP(192,168,1,1)
+    #define DNS_IP      IP(141,56,1,1)
     
 	
 	//IP des NTP-Servers z.B. Server 1.de.pool.ntp.org
